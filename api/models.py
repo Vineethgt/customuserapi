@@ -9,7 +9,7 @@ class User(AbstractBaseUser,PermissionsMixin):
     uuid            = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email           = models.EmailField(verbose_name="email_address",max_length=300,unique=True)
     password        = models.CharField(max_length=200,verbose_name='password')
-    name            = models.CharField(max_length=200,null=True)
+    name            = models.CharField(max_length=200,blank=True,null=True)
     date_of_birth   = models.DateField(verbose_name='date_of_birth',blank=True,default=None,null=True)
     created_at      = models.DateTimeField(verbose_name="created_at",blank=True,null=True,auto_now_add=True)
     updated_at      = models.DateTimeField(verbose_name="updated_at",blank=True,null=True,auto_now=True)
@@ -25,6 +25,16 @@ class User(AbstractBaseUser,PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+class Profile(models.Model):
+    user               = models.OneToOneField(User,on_delete=models.CASCADE)
+    profile_image       = models.ImageField(default='default.png',upload_to='profile_pics')
+    bio                = models.CharField(default=None,max_length=500)
+    headline           = models.CharField(default=None,max_length=100)
+
+    def __str__(self):
+        return f'{self.user.email}'
 
 
 

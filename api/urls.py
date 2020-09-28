@@ -21,6 +21,7 @@ app_name='api'
 urlpatterns = [
     path('users/', views.UserList.as_view(),name='user-list'),
     path('users/<int:pk>/', views.UserDetail.as_view(),name='user-detail'),
+    path('users/<int:pk>/profile/', views.ProfileAPI.as_view())
 ]
 
 

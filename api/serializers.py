@@ -1,11 +1,23 @@
 from rest_framework import serializers
 from api.models import User, Profile, Education, Experience
 
-
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = "__all__"
+
+class UserSerializer(serializers.ModelSerializer):
+    '''def validated_password(self, value):
+        return make_password(value)
+'''
+
+    profile = ProfileSerializer(required=True)
+
+    class Meta:
+        model = User
+        fields = '__all__'
+        extra_fields = 'profile'
+
 
 class EducationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,11 +28,11 @@ class ExperienceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experience
         fields = "__all__"
-        
-class UserSerializer(serializers.ModelSerializer):
+
+#User Serializer
     '''def validated_password(self, value):
         return make_password(value)
-'''
+
 
     profile = ProfileSerializer(required=True)
     class Meta:
@@ -43,4 +55,5 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
         return user
+'''
 

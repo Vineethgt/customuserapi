@@ -15,7 +15,7 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
         
-class User(AbstractBaseUser,PermissionsMixin):
+class User(BaseModel,AbstractBaseUser,PermissionsMixin):
     email           = models.EmailField(verbose_name="email_address",max_length=300,unique=True)
     password        = models.CharField(max_length=200,verbose_name='password')
     name            = models.CharField(max_length=200,blank=True,null=True)
@@ -33,7 +33,7 @@ class User(AbstractBaseUser,PermissionsMixin):
         return self.email
 
 
-class Profile(models.Model):
+class Profile(BaseModel):
     user               = models.OneToOneField(User,on_delete=models.CASCADE)
     profile_image      = models.ImageField(default='default.png',upload_to='profile_pics')
     bio                = models.CharField(default=None,max_length=500)

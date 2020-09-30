@@ -1,18 +1,24 @@
 import uuid
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
 from api.UserManager import UserManager
+from pygments.lexers import get_lexer_by_name
+from pygments.formatters.html import HtmlFormatter
+from pygments import highlight
 
-class User(AbstractBaseUser,PermissionsMixin):
+class BaseModel(models.Model):
     uuid            = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at      = models.DateTimeField(verbose_name="created_at",blank=True,null=True,auto_now_add=True)
+    updated_at      = models.DateTimeField(verbose_name="updated_at",blank=True,null=True,auto_now=True)
+
+    class Meta:
+        abstract = True
+        
+class User(AbstractBaseUser,PermissionsMixin):
     email           = models.EmailField(verbose_name="email_address",max_length=300,unique=True)
     password        = models.CharField(max_length=200,verbose_name='password')
     name            = models.CharField(max_length=200,blank=True,null=True)
-    date_of_birth   = models.DateField(verbose_name='date_of_birth',blank=True,default=None,null=True)
-    created_at      = models.DateTimeField(verbose_name="created_at",blank=True,null=True,auto_now_add=True)
-    updated_at      = models.DateTimeField(verbose_name="updated_at",blank=True,null=True,auto_now=True)
     is_admin        = models.BooleanField(default=False)
     is_active       = models.BooleanField(default=True)
     is_staff        = models.BooleanField(default=False)
@@ -29,12 +35,40 @@ class User(AbstractBaseUser,PermissionsMixin):
 
 class Profile(models.Model):
     user               = models.OneToOneField(User,on_delete=models.CASCADE)
-    profile_image       = models.ImageField(default='default.png',upload_to='profile_pics')
+    profile_image      = models.ImageField(default='default.png',upload_to='profile_pics')
     bio                = models.CharField(default=None,max_length=500)
     headline           = models.CharField(default=None,max_length=100)
+    date_of_birth      = models.DateField(verbose_name='date_of_birth',blank=True,default=None,null=True)
+    gender             = models.CharField(max_length=1, blank=True, null=True)
+    city               = models.CharField(max_length=20, blank=True, null=True)
+    country            = models.CharField(max_length=20, null=True, blank=True)
+    def __str__(self):
+        return f'{self.user.email} Profile'
 
+class Education(BaseModel):
+    user       = models.ForeignKey(User, on_delete=models.CASCADE)
+    university = models.CharField(max_length=100)
+    degree     = models.CharField(max_length=100)
+    major      = models.CharField(max_length=100)
+    Score      = models.CharField(default=None,max_length=100)
+    start_date = models.CharField(max_length=5)
+    end_date   = models.CharField(max_length=5)
     def __str__(self):
         return f'{self.user.email}'
+
+class Experience(BaseModel):
+    user          = models.ForeignKey(User, on_delete=models.CASCADE)
+    title         = models.CharField(max_length=100)
+    Field         =  models.CharField(max_length=100)
+    company       = models.CharField(max_length=200)
+    start_date    = models.CharField(max_length=10)
+    end_date      = models.CharField(max_length=10)
+    work_location = models.CharField(max_length=100)
+    def __str__(self):
+        return f'{self.user.email}'
+
+    
+
 
 
 

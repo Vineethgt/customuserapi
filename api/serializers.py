@@ -1,22 +1,22 @@
 from rest_framework import serializers
-from api.models import User, Profile
+from api.models import User, Profile, Education, Experience
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = "__all__"
-'''
+
 class EducationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = 
+        model = Education
         fields = "__all__"
 
 class ExperienceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = 
+        model = Experience
         fields = "__all__"
-'''
+        
 class UserSerializer(serializers.ModelSerializer):
     '''def validated_password(self, value):
         return make_password(value)

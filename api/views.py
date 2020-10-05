@@ -10,6 +10,7 @@ from rest_framework import status
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
+import uuid
 
 
 
@@ -30,7 +31,7 @@ class UserDetail(APIView):
 
     def get_object(self, pk):
         try:
-            return self.model_class.objects.get(pk=pk)
+            return self.model_class.objects.get(pk=pk)        #return self.model_class.objects.get(pk=pk)
         except self.model_class.DoesNotExist:
             raise ValidationError({
                 'status': False,
@@ -44,7 +45,7 @@ class UserDetail(APIView):
         return Response(
             data={
                 "status": True,
-                "message": f"{self.head} reterived sucessfully",
+                "message": f"{self.head} data reterived sucessfully",
                 "data": serializer.data
             })
 

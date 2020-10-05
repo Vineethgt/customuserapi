@@ -54,7 +54,7 @@ class Education(BaseModel):
     start_date = models.CharField(max_length=5)
     end_date   = models.CharField(max_length=5)
     def __str__(self):
-        return f'{self.user.email}'
+        return f'{self.user.email} Education'
 
 class Experience(BaseModel):
     user          = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -65,7 +65,7 @@ class Experience(BaseModel):
     end_date      = models.CharField(max_length=10)
     work_location = models.CharField(max_length=100)
     def __str__(self):
-        return f'{self.user.email}'
+        return f'{self.user.email} Experience'
 
     
 

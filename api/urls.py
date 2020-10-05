@@ -15,14 +15,18 @@ Including another URLconf
 """
 from django.urls import path, include
 from . import views
-import uuid
 
 app_name='api'
 
 urlpatterns = [
     path('users/', views.UserList.as_view(),name='user-list'),
-    path('users/<uuid:pk>/', views.UserDetail.as_view(),name='user-detail'),
-    path('profile/<pk>', views.ProfileList.as_view(),name='profile-list'),
+    path('users/<uuid:pk>/', views.UserDetails.as_view(),name='user-detail'),
+    path('profile/', views.ProfileList.as_view(),name='profile-list'),
+    path('profile/<uuid:pk>/',views.ProfileDetail.as_view(),name='profile-detail'),
+    path('education/',views.EducationList.as_view(),name='education-list'),
+    path('education/<uuid:pk>/',views.EducationDetail.as_view(),name='education-detail'),
+    path('experience/',views.ExperienceList.as_view(),name='education-list'),
+    path('experience/<uuid:pk>/',views.ExperienceDetail.as_view(),name='education-detail'),
 ]
 
 

@@ -24,7 +24,7 @@ class UserList(generics.ListCreateAPIView):
             return Response({"status":"true","message":"data Posted succesfully.","data":{"uuid": serializer.data['uuid']}}, status=status.HTTP_201_CREATED)
         return Response({'message': 'user with this email already exist',}, status=status.HTTP_400_BAD_REQUEST)
 
-class UserDetail(APIView):
+class UserDetails(APIView):
     model_class = User
     serializer_class = UserSerializer
     head = "user"
@@ -97,114 +97,20 @@ class UserDetail(APIView):
         },
                         status=status.HTTP_200_OK)
 
-class ProfileList(generics.ListCreateAPIView): 
-    queryset = User.objects.all()
+
+class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    def post(self, request, format=None):
-        serializer = ProfileSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"status":"true","message":"data Posted succesfully.","data":{"uuid": serializer.data['uuid']}}, status=status.HTTP_201_CREATED)
-        return Response({'message': 'user with this email already exist',}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ProfileDetails(APIView):
-    model_class = Profile
+class ProfileList(generics.ListCreateAPIView):
+    queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    head = "developer profile"
 
-    def get_object(self, pk):
-        try:
-            return self.model_class.objects.get(pk=pk)
-        except self.model_class.DoesNotExist:
-            raise ValidationError({
-                'status': False,
-                'message': f"failed to find {self.head}",
-                "data": {}
-            })
-
-    def get(self, request, pk, format=None):
-        obj = self.get_object(pk)
-        serializer = DeveloperProfileSerializerRead(obj)
-        return Response(
-            data={
-                "status": True,
-                "message": f"{self.head} reterived sucessfully",
-                "data": serializer.data
-            })
-
-    def put(self, request, pk, format=None):
-        obj = self.get_object(pk)
-        serializer = self.serializer_class(obj, data=request.data)
-
-        user_data = {}
-        if request.data.get("first_name"):
-            user_data["first_name"] = request.data.get("first_name")
-        if request.data.get("last_name"):
-            user_data["last_name"] = request.data.get("last_name")
-
-        if User.objects.filter(pk=pk).exists():
-            user_obj = User.objects.get(pk=pk)
-            user_serializer = UserSerializer(user_obj,
-                                             data=user_data,
-                                             partial=True)
-
-            if user_serializer.is_valid():
-                user_serializer.save()
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                data={
-                    "status": True,
-                    "message": f"{self.head} updated sucessfully",
-                    "data": serializer.data
-                })
-        return Response(data={
-            "status": False,
-            "message": f"{self.head} update failed",
-            "data": serializer.errors
-        },
-                        status=status.HTTP_400_BAD_REQUEST)
-
-    def patch(self, request, pk, format=None):
-        obj = self.get_object(pk)
-        serializer = self.serializer_class(obj,
-                                           data=request.data,
-                                           partial=True)
-
-        user_data = {}
-        if request.data.get("first_name"):
-            user_data["first_name"] = request.data.get("first_name")
-        if request.data.get("last_name"):
-            user_data["last_name"] = request.data.get("last_name")
-
-        if User.objects.filter(pk=pk).exists():
-            user_obj = User.objects.get(pk=pk)
-            user_serializer = UserSerializer(user_obj,
-                                             data=user_data,
-                                             partial=True)
-
-            if user_serializer.is_valid():
-                user_serializer.save()
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                data={
-                    "status": True,
-                    "message": f"{self.head} updated sucessfully",
-                    "data": serializer.data
-                })
-        return Response(data={
-            "status": False,
-            "message": f"{self.head} update failed",
-            "data": serializer.errors
-        },
-                        status=status.HTTP_400_BAD_REQUEST)
-
-
-
+    def get(self, request, **kwargs):
+        profile = Profile.objects.all()
+        serializer = ProfileSerializer(profile, many = True)
+        return Response({"status": "true", "message": "data Retrieve successfully.", "data": serializer.data})
 
 '''
 class ProfileAPI(APIView):
@@ -214,3 +120,37 @@ class ProfileAPI(APIView):
         return Response(profile_serializer.data)
 
 '''
+
+
+class EducationDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Education.objects.all()
+    serializer_class = EducationSerializer
+
+
+class EducationList(generics.ListCreateAPIView):
+    queryset = Education.objects.all()
+    serializer_class = EducationSerializer
+
+    
+    def get(self, request, **kwargs):
+        education = Education.objects.all()
+        serializer = EducationSerializer(education, many = True)
+        return Response({"status": "true", "message": "data Retrieve successfully.", "data": serializer.data})
+
+
+
+class ExperienceDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Experience.objects.all()
+    serializer_class = ExperienceSerializer
+
+
+
+class ExperienceList(generics.ListCreateAPIView):
+    queryset = Experience.objects.all()
+    serializer_class = ExperienceSerializer
+
+    def get(self, request, **kwargs):
+        experience = Experience.objects.all()
+        serializer = ExperienceSerializer(experience, many = True)
+        return Response({"status": "true", "message": "data Retrieve successfully.", "data": serializer.data})
+

@@ -6,19 +6,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = "__all__"
 
-class UserSerializer(serializers.ModelSerializer):
-    '''def validated_password(self, value):
-        return make_password(value)
-'''
-
-    profile = ProfileSerializer(required=True)
-
-    class Meta:
-        model = User
-        fields = '__all__'
-        extra_fields = 'profile'
-
-
 class EducationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Education
@@ -28,6 +15,34 @@ class ExperienceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Experience
         fields = "__all__"
+
+
+class UserSerializer(serializers.ModelSerializer):
+    '''def validated_password(self, value):
+        return make_password(value)
+'''
+
+    profile = ProfileSerializer(required=True)
+    class Meta:
+        model = User
+        fields = '__all__'
+        extra_fields = 'profile'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #User Serializer
     '''def validated_password(self, value):

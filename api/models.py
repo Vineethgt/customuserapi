@@ -35,7 +35,7 @@ class User(BaseModel,AbstractBaseUser,PermissionsMixin):
 
 class Profile(BaseModel):
     user               = models.OneToOneField(User,on_delete=models.CASCADE)
-    profile_image      = models.ImageField(default='default.png',upload_to='profile_pics')
+    profile_image      = models.ImageField(default=None,upload_to='profile_pics')
     bio                = models.CharField(default=None,max_length=500)
     headline           = models.CharField(default=None,max_length=100)
     date_of_birth      = models.DateField(verbose_name='date_of_birth',blank=True,default=None,null=True)
@@ -66,6 +66,12 @@ class Experience(BaseModel):
     work_location = models.CharField(max_length=100)
     def __str__(self):
         return f'{self.user.email} Experience'
+
+class Feed(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    feed = models.TextField(default=False)
+    def __str__(self):
+        return f'{self.user.email} Feed'
 
     
 

@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework import status
-from api.models import User, Profile, Education, Experience
-from api.serializers import UserSerializer, ProfileSerializer, EducationSerializer,ExperienceSerializer
+from api.models import User, Profile, Education, Experience, Feed
+from api.serializers import UserSerializer, ProfileSerializer, EducationSerializer, ExperienceSerializer, FeedSerializer
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django.http import Http404
@@ -154,3 +154,11 @@ class ExperienceList(generics.ListCreateAPIView):
         serializer = ExperienceSerializer(experience, many = True)
         return Response({"status": "true", "message": "data Retrieve successfully.", "data": serializer.data})
 
+class Feedpage(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Feed.objects.all()
+    serializer_class = FeedSerializer
+
+    def get(self, request, **kwargs):
+        fed = Feed.objects.all()
+        serializer = FeedSerializer(fed, many=True)
+        return Response({"status": "true", "message": "data Retrieve successfully.", "data": serializer.data})

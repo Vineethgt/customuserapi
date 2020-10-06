@@ -27,6 +27,7 @@ urlpatterns = [
     path('education/<uuid:pk>/',views.EducationDetail.as_view(),name='education-detail'),
     path('experience/',views.ExperienceList.as_view(),name='education-list'),
     path('experience/<uuid:pk>/',views.ExperienceDetail.as_view(),name='education-detail'),
+    path('feedpage/',views.Feedpage.as_view(),name='Feed-Detail'),
 ]
 
 

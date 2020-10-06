@@ -64,6 +64,21 @@ class BaseDetails(APIView):
             "data": serializer.errors
         },
                         status=status.HTTP_400_BAD_REQUEST)
+    
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data={
+                "status": True,
+                'message': f'{self.head} created',
+                'data': serializer.data
+            })
+        return Response(data={
+            'status': False,
+            'message': f'error creating {self.head}',
+            'data': serializer.errors
+        }, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, pk, format=None):
         obj = self.get_object(pk)

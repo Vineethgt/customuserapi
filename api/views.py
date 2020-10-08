@@ -7,12 +7,15 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework import status
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from .baseview import BaseDetails
 import uuid
-
+from django.core.mail import send_mail
+from django.conf import settings
+from rest_framework.pagination import PageNumberPagination
+from api.pagination import PaginationHandlerMixin
 
 
 class UserList(generics.ListCreateAPIView): 
@@ -82,8 +85,6 @@ class Feedpage(generics.RetrieveUpdateDestroyAPIView):
         serializer = FeedSerializer(fed, many=True)
         return Response({"status": "true", "message": "data Retrieve successfully.", "data": serializer.data})
 
-
-
 '''
 class ProfileAPI(APIView):
     def get(self, request, *args, **kwargs):
@@ -92,3 +93,30 @@ class ProfileAPI(APIView):
         return Response(profile_serializer.data)
 
 '''
+
+def email(request):
+
+    subject = 'Thank you for registering'
+    message = 'It means a world to us'
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = ['vineeth.t@engineerbabu.in']
+
+    send_mail(subject,message,email_from, recipient_list)
+
+    return HttpResponseRedirect('http://127.0.0.1:8000/users/')
+
+
+class BasicPagination(PageNumberPagination):
+    page_size_query_param = 'limit'
+class MyListAPI(APIView, PaginationHandlerMixin):
+    pagination_class = BasicPagination
+    serializer_class = ProfileSerializer
+    def get(self, request, format=None, *args, **kwargs):
+        instance = Dataset.objects.all()
+        page = self.paginate_queryset(instance)
+        if page is not None:
+            serializer = self.get_paginated_response(self.serializer_class(page,
+ many=True).data)
+        else:
+            serializer = self.serializer_class(instance, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

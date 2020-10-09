@@ -14,7 +14,6 @@ from .baseview import BaseDetails
 import uuid
 from django.core.mail import send_mail
 from django.conf import settings
-from rest_framework.pagination import PageNumberPagination
 from api.pagination import PaginationHandlerMixin
 
 

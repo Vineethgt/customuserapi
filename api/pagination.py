@@ -1,3 +1,6 @@
+from rest_framework.pagination import PageNumberPagination
+
+
 class PaginationHandlerMixin(object):
     @property
     def paginator(self):

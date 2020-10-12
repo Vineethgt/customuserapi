@@ -16,22 +16,16 @@ class ExperienceSerializer(serializers.ModelSerializer):
         model = Experience
         fields = "__all__"
 
-
 class UserSerializer(serializers.ModelSerializer):
-    '''def validated_password(self, value):
+    def validated_password(self, value):
         return make_password(value)
-'''
 
     profile = ProfileSerializer(required=True)
-    #edu = EducationSerializer(required=True)
-    #exp = ExperienceSerializer(required=True)
-
+  
     class Meta:
         model = User
         fields = '__all__'
         extra_fields = 'profile',
-        #extra_fields = 'edu',
-        #extra_fields = 'exp',
 
 class FeedSerializer(serializers.ModelSerializer):
     class Meta:

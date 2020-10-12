@@ -7,91 +7,55 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django.http import Http404
 from rest_framework import status
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, request
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from .baseview import BaseDetails
+from .Base_Viewset import BaseViewset
 import uuid
 from django.core.mail import send_mail
 from django.conf import settings
 from api.pagination import PaginationHandlerMixin
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.pagination import PageNumberPagination
 
+class BasicPagination(PageNumberPagination):
+    page_size_query_param = '2'
 
-class UserList(generics.ListCreateAPIView): 
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    def post(self, request, format=None):
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"status":"true","message":"data Posted succesfully.","data":{"uuid": serializer.data['uuid']}}, status=status.HTTP_201_CREATED)
-        return Response({'message': 'user with this email already exist',}, status=status.HTTP_400_BAD_REQUEST)
-
-class UserDetails(BaseDetails):
+class UserViewset(BaseViewset):
     model_class = User
+    pagination_class = BasicPagination
     serializer_class = UserSerializer
+    queryset = User.objects.all()
     head = "user"
 
 
-class ProfileDetail(BaseDetails):
+class ProfileViewset(BaseViewset):
     model_class = Profile
+    pagination_class = BasicPagination
     serializer_class = ProfileSerializer
+    queryset = Profile.objects.all()
     head = "profile"
 
-class ProfileList(generics.ListCreateAPIView):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-
-    def get(self, request, **kwargs):
-        profile = Profile.objects.all()
-        serializer = ProfileSerializer(profile, many = True)
-        return Response({"status": "true", "message": "data Retrieve successfully.", "data": serializer.data})
-
-class EducationDetail(BaseDetails):
+class EducationViewset(BaseViewset):
     model_class = Education
+    pagination_class = BasicPagination
     serializer_class = EducationSerializer
+    queryset = Education.objects.all()
     head = "education"
 
-class EducationList(generics.ListCreateAPIView):
-    queryset = Education.objects.all()
-    serializer_class = EducationSerializer
-    
-    def get(self, request, **kwargs):
-        education = Education.objects.all()
-        serializer = EducationSerializer(education, many = True)
-        return Response({"status": "true", "message": "data Retrieve successfully.", "data": serializer.data})
-
-class ExperienceDetail(BaseDetails):
+class ExperienceViewset(BaseViewset):
     model_class = Experience
+    pagination_class = BasicPagination
     serializer_class = ExperienceSerializer
+    queryset = Experience.objects.all()
     head = "experience"
 
-class ExperienceList(generics.ListCreateAPIView):
-    queryset = Experience.objects.all()
-    serializer_class = ExperienceSerializer
-
-    def get(self, request, **kwargs):
-        experience = Experience.objects.all()
-        serializer = ExperienceSerializer(experience, many = True)
-        return Response({"status": "true", "message": "data Retrieve successfully.", "data": serializer.data})
-
-class Feedpage(generics.RetrieveUpdateDestroyAPIView):
+class FeedViewset(BaseViewset):
     queryset = Feed.objects.all()
+    pagination_class = BasicPagination
     serializer_class = FeedSerializer
-
-    def get(self, request, **kwargs):
-        fed = Feed.objects.all()
-        serializer = FeedSerializer(fed, many=True)
-        return Response({"status": "true", "message": "data Retrieve successfully.", "data": serializer.data})
-
-'''
-class ProfileAPI(APIView):
-    def get(self, request, *args, **kwargs):
-        user = get_object_or_404(User, pk=kwargs['user_id'])
-        profile_serializer = ProfileSerializer(user.profile)
-        return Response(profile_serializer.data)
-
-'''
+    queryset = Feed.objects.all()
+    head = "feed"
 
 def email(request):
 
@@ -104,18 +68,3 @@ def email(request):
 
     return HttpResponseRedirect('http://127.0.0.1:8000/users/')
 
-
-class BasicPagination(PageNumberPagination):
-    page_size_query_param = 'limit'
-class MyListAPI(APIView, PaginationHandlerMixin):
-    pagination_class = BasicPagination
-    serializer_class = ProfileSerializer
-    def get(self, request, format=None, *args, **kwargs):
-        instance = Dataset.objects.all()
-        page = self.paginate_queryset(instance)
-        if page is not None:
-            serializer = self.get_paginated_response(self.serializer_class(page,
- many=True).data)
-        else:
-            serializer = self.serializer_class(instance, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)

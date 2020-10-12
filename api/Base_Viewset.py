@@ -54,9 +54,7 @@ class BaseViewset(viewsets.ModelViewSet):
 
     def update(self, request, pk, format=None):
         obj = self.get_object(pk)
-        serializer = self.serializer_class(obj,
-                                           data=request.data,
-                                           partial=True)
+        serializer = self.serializer_class(obj, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(
@@ -74,7 +72,9 @@ class BaseViewset(viewsets.ModelViewSet):
 
     def partial_update(self, request, pk, format=None):
         obj = self.get_object(pk)
-        serializer = self.serializer_class(obj, data=request.data)
+        serializer = self.serializer_class(obj,
+                                           data=request.data,
+                                           partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(

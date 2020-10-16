@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'rest_auth.registration',
-    'allauth.socialaccount'
+    'allauth.socialaccount',
+    'django_filters'
 ]
 
 AUTH_USER_MODEL = 'api.User'
@@ -57,8 +58,11 @@ REST_FRAMEWORK={
     'PAGE_SIZE': 2,
     'DEFAULT_AUTHENTICATION_CLASSES': (
     'rest_framework_jwt.authentication.JSONWebTokenAuthentication'),
-    'DEFAULT_AUTHENTICATION_CLASSES':('rest_framework_simplejwt.authentication.JWTAuthentication',)
-}
+    'DEFAULT_AUTHENTICATION_CLASSES':('rest_framework_simplejwt.authentication.JWTAuthentication',),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.SearchFilter',
+        'django_filters.rest_framework.DjangoFilterBackend',)
+    }
 
 
 SIMPLE_JWT = {
@@ -174,7 +178,6 @@ ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/?verification=1'
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS =1
 
 SITE_ID = 1
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'data')
 MEDIA_URL  = '/images/'

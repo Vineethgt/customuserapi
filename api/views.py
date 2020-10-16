@@ -1,53 +1,68 @@
-from django.shortcuts import render
-from rest_framework import generics
-from rest_framework import status
 from api.models import User, Profile, Education, Experience, Feed
 from api.serializers import UserSerializer, ProfileSerializer, EducationSerializer, ExperienceSerializer, FeedSerializer
-from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from django.http import Http404
-from rest_framework import status
-from django.http import HttpResponse, HttpResponseRedirect, request
-from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
+from django.http import HttpResponse
 from .Base_Viewset import BaseViewset
-import uuid
 from django.core.mail import send_mail
 from django.conf import settings
-from api.pagination import PaginationHandlerMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters 
+import rest_framework.mixins as mixin
+from rest_framework.filters import SearchFilter, OrderingFilter
+from url_filter.integrations.drf import DjangoFilterBackend
+#from .filter import ProfileFilter, EducationFilter, ExperienceFilter
+import django_filters
+
 
 class BasicPagination(PageNumberPagination):
     page_size_query_param = '2'
 
 class UserViewset(BaseViewset):
     model_class = User
-    pagination_class = BasicPagination
+    filter_backends = (filters.SearchFilter,filters.OrderingFilter,DjangoFilterBackend)
+    ordering_fields =('name','email')
+    filter_fields = ('name', 'email','created_at')
+    search_fields = ('name','email')
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    pagination_class = BasicPagination
     head = "user"
+    
 
 
 class ProfileViewset(BaseViewset):
     model_class = Profile
-    pagination_class = BasicPagination
+    filter_backends = (filters.SearchFilter,filters.OrderingFilter,DjangoFilterBackend)
+    ordering_fields =('bio','city')
+    filter_fields = ('bio', 'city','created_at')
+    search_fields = ('bio', 'city')
     serializer_class = ProfileSerializer
     queryset = Profile.objects.all()
+    pagination_class = BasicPagination
     head = "profile"
 
 class EducationViewset(BaseViewset):
     model_class = Education
-    pagination_class = BasicPagination
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend, ]
+    #filter_fields = {'university':['exact'], 'degree':['exact'],'start_date':['gte'],'end_date':['lte']}
+    filter_fields = ('university', 'degree','start_date','end_date')
+    search_fields = ('university', 'degree')
     serializer_class = EducationSerializer
     queryset = Education.objects.all()
+    pagination_class = BasicPagination
     head = "education"
 
 class ExperienceViewset(BaseViewset):
     model_class = Experience
-    pagination_class = BasicPagination
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend,]
+    filter_fields = ('title', 'company','start_date','end_date') #start_date__gte & end_date__lte
+    search_fields = ('title', 'company')
     serializer_class = ExperienceSerializer
     queryset = Experience.objects.all()
+    pagination_class = BasicPagination
     head = "experience"
 
 class FeedViewset(BaseViewset):

@@ -51,8 +51,8 @@ class Education(BaseModel):
     degree     = models.CharField(max_length=100)
     major      = models.CharField(max_length=100)
     Score      = models.CharField(default=None,max_length=100)
-    start_date = models.CharField(max_length=5)
-    end_date   = models.CharField(max_length=5)
+    start_date = models.DateField(default=None)
+    end_date   = models.DateField(default=None)
     def __str__(self):
         return f'{self.user.email} Education'
 
@@ -61,8 +61,8 @@ class Experience(BaseModel):
     title         = models.CharField(max_length=100)
     Field         =  models.CharField(max_length=100)
     company       = models.CharField(max_length=200)
-    start_date    = models.CharField(max_length=10)
-    end_date      = models.CharField(max_length=10)
+    start_date    = models.DateField(default=None)
+    end_date      = models.DateField(default=None)
     work_location = models.CharField(max_length=100)
     def __str__(self):
         return f'{self.user.email} Experience'

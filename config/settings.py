@@ -190,3 +190,76 @@ EMAIL_HOST_USER = 'your@mail.com'
 EMAIL_HOST_PASSWORD = 'password'
 
 #REST_AUTH_SERIALIZERS = {'USER_DETAILS_SERIALIZER': 'api.serializers.UserSerializer',}
+
+#logging
+
+'''
+LOGGING = {
+ 'version': 1,
+ 'disable_existing_loggers': False,
+ 'formatters': {
+  'simple': {
+   'format': '[%(asctime)s] %(levelname)s | %(funcName)s | %(name)s | %(message)s',
+   'datefmt': '%Y-%m-%d %H:%M:%S',
+  },
+ },
+ 'handlers': {
+  'logger': {
+   'level': 'DEBUG',
+   'class': 'logging.handlers.RotatingFileHandler',
+   'filename': '/logs/test.log',
+   'formatter': 'simple',
+  }
+ },
+ 'loggers': {
+  'signal': {
+   'handlers': ['logger'],
+   'level': 'DEBUG',
+  }
+ }
+}
+
+'''
+
+LOG_PATH = '/var/log/my_service'
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': "[%(asctime)s] %(levelname)s [%(filename)s:%(lineno)s] %(message)s",
+            'datefmt': "%Y/%b/%d %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'django': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(str(LOG_PATH), 'django.log'),
+            'maxBytes': (1024 * 1024 * 10),
+            'backupCount': 10,
+            'formatter': 'verbose',
+        },
+        'user': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(str(LOG_PATH), 'user.log'),
+            'maxBytes': 1024 * 1024 * 10,
+            'backupCount': 10,
+            'formatter': 'verbose',
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['django', 'console'],
+                'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+            },
+            'user': {
+                'handlers': ['user', 'console'],
+                'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            },
+        },
+    },
+}

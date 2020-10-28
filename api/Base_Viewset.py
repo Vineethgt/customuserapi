@@ -5,7 +5,6 @@ from rest_framework import viewsets
 import rest_framework.mixins as mixin
 from url_filter.integrations.drf import DjangoFilterBackend
 import six
-import logging
 
 
 class BaseViewset(viewsets.ModelViewSet):
@@ -23,9 +22,6 @@ class BaseViewset(viewsets.ModelViewSet):
 
         if page is not None:
             serializer = self.get_serializer(page, many = True)
-            logger = logging.getLogger("loggers")
-            message = {'message' : "user list created "}
-            logger.info(message)
             return self.get_paginated_response({
                 "status": "true",
                 "message": "data listed successfully.",

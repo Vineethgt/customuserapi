@@ -1,16 +1,17 @@
 import uuid
 from django.db import models
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from api.UserManager import UserManager
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters.html import HtmlFormatter
 from pygments import highlight
+from django.utils import timezone
+from django.conf import settings
 
 class BaseModel(models.Model):
     uuid            = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_at      = models.DateTimeField(verbose_name="created_at",blank=True,null=True,auto_now_add=True)
-    updated_at      = models.DateTimeField(verbose_name="updated_at",blank=True,null=True,auto_now=True)
+    created_at      = models.DateTimeField(blank=True, null=True,auto_now_add=True)
+    updated_at      = models.DateTimeField(blank=True, null=True,auto_now=True)
 
     class Meta:
         abstract = True
@@ -34,7 +35,7 @@ class User(BaseModel,AbstractBaseUser,PermissionsMixin):
 
 
 class Profile(BaseModel):
-    user               = models.OneToOneField(User,on_delete=models.CASCADE)
+    user               = models.OneToOneField(User,on_delete=models.CASCADE, default=True, related_name="user_profile")
     profile_image      = models.ImageField(default=None,upload_to='profile_pics')
     bio                = models.CharField(default=None,max_length=500)
     headline           = models.CharField(default=None,max_length=100)
@@ -42,6 +43,7 @@ class Profile(BaseModel):
     gender             = models.CharField(max_length=1, blank=True, null=True)
     city               = models.CharField(max_length=20, blank=True, null=True)
     country            = models.CharField(max_length=20, null=True, blank=True)
+    follow             = models.ManyToManyField(to=User,related_name="followed_by",)
     def __str__(self):
         return f'{self.user.email} Profile'
 
@@ -68,12 +70,42 @@ class Experience(BaseModel):
         return f'{self.user.email} Experience'
 
 class Feed(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     feed = models.TextField(default=False)
     def __str__(self):
         return f'{self.user.email} Feed'
 
-    
+
+class FriendRequest(models.Model):
+    PENDING = "pending"
+    FRIENDS = "friends"
+    status = models.CharField(
+        verbose_name="status",
+        max_length=100,
+        choices=(
+            (PENDING, PENDING),
+            (FRIENDS, FRIENDS),
+        ),
+        default=PENDING
+    )
+    sender = models.ForeignKey(
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="sent_friend_request"
+    )
+    receiver = models.ForeignKey(
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="received_friend_request"
+    )
+    created = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.sender} sent friend request to {self.receiver}. Status: {self.status}"
+
+
 
 
 

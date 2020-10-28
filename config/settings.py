@@ -219,7 +219,7 @@ LOGGING = {
  }
 }
 
-'''
+
 
 LOG_PATH = '/var/log/my_service'
 LOGGING = {
@@ -263,3 +263,5 @@ LOGGING = {
         },
     },
 }
+
+'''

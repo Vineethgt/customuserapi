@@ -25,10 +25,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     user_profile = ProfileSerializer()
 
+
     class Meta:
         model = User
-        fields = '__all__'
-        extra_fields = 'profile',
+        fields = ["email","user_profile"]
 
 class FeedSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,6 +40,17 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = FriendRequest
         fields = "__all__"
+
+
+
+class UserProfileFriendSerializer(serializers.ModelSerializer):
+
+    user_friendrequest = FriendRequestSerializer()
+    
+
+    class Meta:
+        model = Profile
+        fields = ["__all__","user_friendrequest"]
 
 
 

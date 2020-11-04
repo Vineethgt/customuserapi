@@ -1,4 +1,7 @@
 import uuid
+import jwt
+import self as self
+from datetime import  timedelta
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from api.UserManager import UserManager
@@ -6,7 +9,11 @@ from pygments.lexers import get_lexer_by_name
 from pygments.formatters.html import HtmlFormatter
 from pygments import highlight
 from django.utils import timezone
-from django.conf import settings
+#from django.conf import settings
+from django.db.models.functions import datetime
+from .UserManager import UserManager
+from config import settings
+
 
 class BaseModel(models.Model):
     uuid            = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -35,14 +42,16 @@ class User(BaseModel,AbstractBaseUser,PermissionsMixin):
 
 
 class Profile(BaseModel):
-    user               = models.OneToOneField(User,on_delete=models.CASCADE, default=True, related_name="user_profile")
-    profile_image      = models.ImageField(default=None,upload_to='profile_pics')
+    user               = models.OneToOneField(User,on_delete=models.CASCADE, related_name="user_profile")
+    profile_image      = models.ImageField(default=None,upload_to='profile_pics', blank= True,null=True)
     bio                = models.CharField(default=None,max_length=500)
     headline           = models.CharField(default=None,max_length=100)
     date_of_birth      = models.DateField(verbose_name='date_of_birth',blank=True,default=None,null=True)
-    gender             = models.CharField(max_length=1, blank=True, null=True)
+    gender_choice      = [('','Select Gender'),('Male', 'Male'),('Female', 'Female'),('Other', 'Other')]
+    gender             = models.CharField(max_length=10, choices=gender_choice, blank=True, null=True)
     city               = models.CharField(max_length=20, blank=True, null=True)
     country            = models.CharField(max_length=20, null=True, blank=True)
+    profile_status     = models.CharField(verbose_name="Profile status",max_length=10,choices=(('Public', 'Public'),('Private', 'Private'),),default='Public')
     follow             = models.ManyToManyField(to=User,related_name="followed_by",)
     def __str__(self):
         return f'{self.user.email} Profile'
@@ -76,7 +85,7 @@ class Feed(BaseModel):
         return f'{self.user.email} Feed'
 
 
-class FriendRequest(models.Model):
+class FriendRequest(BaseModel):
     PENDING = "pending"
     FRIENDS = "friends"
     status = models.CharField(

@@ -5,6 +5,7 @@ from rest_framework import viewsets
 import rest_framework.mixins as mixin
 from url_filter.integrations.drf import DjangoFilterBackend
 import six
+from .models import User
 
 
 class BaseViewset(viewsets.ModelViewSet):

@@ -30,3 +30,15 @@ class UserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(('Superuser must have is_superuser=True.'))
         return self.create_user(email, password, **extra_fields)
+
+
+        
+class Follow(BaseUserManager):
+
+    def follow(self, user_to_follow):
+        obj, created = self.objects.get_or_create(user=self)
+        return self.user.following.add(self, user_to_follow)
+
+    def unfollow(self, user, user_to_unfollow):
+        obj, created = self.objects.get_or_create(user=user)
+        return self.following.remove(user, user_to_unfollow)

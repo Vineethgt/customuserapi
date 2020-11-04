@@ -13,10 +13,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import datetime
 import os
+import django
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -48,22 +48,35 @@ INSTALLED_APPS = [
     'allauth.account',
     'rest_auth.registration',
     'allauth.socialaccount',
-    'django_filters'
+    'django_filters',
+    'generics'
 ]
 
 AUTH_USER_MODEL = 'api.User'
 
 REST_FRAMEWORK={
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 2,
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-    'rest_framework_jwt.authentication.JSONWebTokenAuthentication'),
-    'DEFAULT_AUTHENTICATION_CLASSES':('rest_framework_simplejwt.authentication.JWTAuthentication',),
+    'PAGE_SIZE': 10,
+    #'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_jwt.authentication.JSONWebTokenAuthentication'),
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework.filters.SearchFilter',
         'django_filters.rest_framework.DjangoFilterBackend',)
     }
 
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # existing backend
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=365*10),
@@ -146,6 +159,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_USE_JWT = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -189,79 +203,4 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'your@mail.com'
 EMAIL_HOST_PASSWORD = 'password'
 
-#REST_AUTH_SERIALIZERS = {'USER_DETAILS_SERIALIZER': 'api.serializers.UserSerializer',}
-
-#logging
-
-'''
-LOGGING = {
- 'version': 1,
- 'disable_existing_loggers': False,
- 'formatters': {
-  'simple': {
-   'format': '[%(asctime)s] %(levelname)s | %(funcName)s | %(name)s | %(message)s',
-   'datefmt': '%Y-%m-%d %H:%M:%S',
-  },
- },
- 'handlers': {
-  'logger': {
-   'level': 'DEBUG',
-   'class': 'logging.handlers.RotatingFileHandler',
-   'filename': '/logs/test.log',
-   'formatter': 'simple',
-  }
- },
- 'loggers': {
-  'signal': {
-   'handlers': ['logger'],
-   'level': 'DEBUG',
-  }
- }
-}
-
-
-
-LOG_PATH = '/var/log/my_service'
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': "[%(asctime)s] %(levelname)s [%(filename)s:%(lineno)s] %(message)s",
-            'datefmt': "%Y/%b/%d %H:%M:%S"
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-    },
-    'handlers': {
-        'django': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(str(LOG_PATH), 'django.log'),
-            'maxBytes': (1024 * 1024 * 10),
-            'backupCount': 10,
-            'formatter': 'verbose',
-        },
-        'user': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(str(LOG_PATH), 'user.log'),
-            'maxBytes': 1024 * 1024 * 10,
-            'backupCount': 10,
-            'formatter': 'verbose',
-        },
-        'loggers': {
-            'django': {
-                'handlers': ['django', 'console'],
-                'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
-            },
-            'user': {
-                'handlers': ['user', 'console'],
-                'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-            },
-        },
-    },
-}
-
-'''
+REST_AUTH_SERIALIZERS = {'USER_DETAILS_SERIALIZER': 'api.serializers.UserSerializer',}

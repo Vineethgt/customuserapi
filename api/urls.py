@@ -1,5 +1,6 @@
 from django.urls import path, include
 from django.conf.urls import url, re_path
+from django.contrib import admin
 from . import views 
 from rest_auth.registration.views import VerifyEmailView
 from allauth.account.views import PasswordChangeView
@@ -30,11 +31,8 @@ urlpatterns = [
     path("users/followers/", views.ListFollowers.as_view(), name="followers"),
     path("users/following/", views.ListFollowing.as_view(), name="following"),
     path("users/friendrequests/<uuid:uid>/", views.SendFriendRequest.as_view(), name="send-friend-request"),
-    path("users/friendrequests/", views.ShowPendingReceivedFriendRequests.as_view(), name="show-pending-received-fr-request"),
-    path("users/friendrequests/pending/", views.ShowPendingSentFriendRequests.as_view(), name="show-pending-sent-fr-request"),
+    path('friendrequests/', views.ShowPendingReceivedFriendRequests.as_view(), name="show-pending-received-fr-request"),
+    path('friendrequests/pending/', views.ShowPendingSentFriendRequests.as_view(), name="show-pending-sent-fr-request"),
     path("users/friendrequests/accept/<uuid:request_id>/", views.AcceptFriendRequest.as_view(), name="accept-friend-request"),
-    path("users/friendrequests/reject/<uuid:request_id>/", views.RejectFriendRequest.as_view(), name="request-friend-request"),
-    path("users/friends/", views.ShowFriends.as_view(), name="show-all-friends"),
-    path("users/friends/unfriend/<uuid:uid>/", views.DeleteFriendRelation.as_view(), name="delete-friend-relation"),
    
 ]

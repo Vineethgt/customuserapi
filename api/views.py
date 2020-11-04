@@ -1,5 +1,6 @@
+import uuid
 from api.models import User, Profile, Education, Experience, Feed, FriendRequest
-from api.serializers import UserSerializer, ProfileSerializer, EducationSerializer, ExperienceSerializer, FeedSerializer, FriendRequestSerializer, UserProfileSerializer
+from api.serializers import UserSerializer, ProfileSerializer, EducationSerializer, ExperienceSerializer, FeedSerializer, FriendRequestSerializer, UserProfileSerializer, UserProfileFriendSerializer
 from rest_framework.views import APIView
 from rest_framework.generics import UpdateAPIView, DestroyAPIView, ListAPIView, GenericAPIView, CreateAPIView
 from django.http import HttpResponse
@@ -17,6 +18,8 @@ from url_filter.integrations.drf import DjangoFilterBackend
 from django.contrib.auth import  get_user_model
 import django_filters
 from django.core.mail import EmailMessage
+from rest_framework.response import Response
+
 
 class BasicPagination(PageNumberPagination):
     page_size_query_param = '2'
@@ -87,19 +90,48 @@ def email(request):
 #######################################################Followrequest###################################################################
 
 # POST: follow a user
+#class Follow(UpdateAPIView):
+#    serializer_class = UserProfileSerializer
+#    queryset = ProfileSerializer
+#    lookup_url_kwarg = "uid"
+#
+#    def patch(self, request, *args, **kwargs):
+#        #import pdb; pdb.set_trace()
+#        uid = kwargs.get("uid")
+#        user_to_follow = User.objects.get(uuid=uid)
+#        user_to_follow.followed_by.add(self.request.user.user_profile)
+#        following_profiles = self.request.user.user_profile.follow.all()       
+#        return HttpResponse(f"{self.request.user.email} follows {user_to_follow.email}")
+
 class Follow(UpdateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserProfileFriendSerializer
+    queryset = UserProfileFriendSerializer
     lookup_url_kwarg = "uid"
 
     def patch(self, request, *args, **kwargs):
-        uid = self.kwargs.get("uid")
-        user_to_follow = User.objects.__getattribute__(uuid=uid)
-        user_to_follow.followed_by.add(self.request.user.user_profile)       
-        return Response(f"{self.email} follows {user_to_follow.email}")
+        #import pdb; pdb.set_trace()
+        uid = kwargs.get("uid")
+        user_to_follow = User.objects.get(uuid=uid)
+        if user_to_follow.profile_status == "Public":
+            if user_to_follow not in self.request.user.user_profile.follow.all():
+                user_to_follow.followed_by.add(self.request.user.user_profile)
+                return HttpResponse(f"{self.request.user.email} follows {user_to_follow.email}")
+            else:
+                return HttpResponse(f"{self.request.user.email} is already following {user_to_follow.email}")
+        elif user_to_follow.profile_status == "Private" and user_to_follow.status == "friends":
+            if user_to_follow not in self.request.user.user_profile.follow.all():
+                user_to_follow.followed_by.add(self.request.user.user_profile)
+                return HttpResponse(f"{self.request.user.email} follows {user_to_follow.email}")
+            else:
+                return HttpResponse(f"{self.request.user.email} is already following {user_to_follow.email}")
+        else:
+            return HttpResponse(f"{self.request.user.email} has to be friend to follow {user_to_follow.email}")
+        return HttpResponse(f"***********check code***************")       
+
 
 # POST: unfollow a user
 class Unfollow(DestroyAPIView):
-    queryset = UserSerializer
+    queryset = UserProfileSerializer
     serializer_class = ProfileSerializer
     lookup_url_kwarg = "uid"
 
@@ -107,7 +139,7 @@ class Unfollow(DestroyAPIView):
         uid = self.kwargs.get("uid")
         to_delete = User.objects.get(uuid=uid)
         self.request.user.user_profile.follow.remove(to_delete)
-        return Response("Unfollowed!")
+        return HttpResponse("Unfollowed!")
 
 
 # GET: List of all the followers
@@ -116,7 +148,16 @@ class ListFollowers(ListAPIView):
 
     def get_queryset(self):
         followers_profile = self.request.user.followed_by.all()
-        return [up.parent_user for up in followers_profile]
+        e=[up.user for up in followers_profile]
+        data={
+            "status": True,
+            "message": "Followers list created successfully",
+            "data": e.json 
+            }
+        return Response(
+                )
+        HttpResponse
+        #return [up.user for up in followers_profile]
 
 
 # GET: List of all the people the user is following
@@ -138,12 +179,12 @@ class SendFriendRequest(GenericAPIView):
         receiver_id = kwargs["uid"]
         receiver = User.objects.get(uuid=receiver_id)
         if self.request.user.email != receiver.email:
-            friend_request, created = FriendRequest.objects.create(sender=self.request.user, receiver=receiver)
-            if created:
-                return Response(f"{self.request.user.email} sent a friend request to {receiver.email}")
+            friend_request, created_at = FriendRequest.objects.get_or_create(sender=self.request.user, receiver=receiver)
+            if created_at:
+                return HttpResponse(f"{self.request.user.email} sent a friend request to {receiver.email}")
             else:
-                return Response(f"You have already sent a friend request to {receiver.email}")
-        return Response(f"You can't send a friend request to yourself, {self.request.user.email}")
+                return HttpResponse(f"You have already sent a friend request to {receiver.email}")
+        return HttpResponse(f"You can't send a friend request to yourself, {self.request.user.email}")
 
 
 # GET: List all open friend requests from others
@@ -175,55 +216,14 @@ class AcceptFriendRequest(GenericAPIView):
             friend_request = FriendRequest.objects.get(uuid=request_id)
             sender = User.objects.get(uuid=friend_request.sender_id)
             receiver = User.objects.get(uuid=friend_request.receiver_id)
-            if friend_request.status == "pending" and self.request.user.uuid == receiver.uuid:
+            if friend_request.status == "pending" and self.request.user.email == receiver.email:
                 FriendRequest.objects.create(sender=receiver, receiver=sender, status="friends")
                 friend_request.status = "friends"
                 friend_request.save()
-                return Response(f"{sender.email} and {receiver.email} are now friends!")
-            elif friend_request.status == "friends" and self.request.user.uuid == receiver.uuid:
-                return Response(f"{sender.email} and {receiver.email} are already friends!")
+                return HttpResponse(f"{sender.email} and {receiver.email} are now friends!")
+            elif friend_request.status == "friends" and self.request.user.email == receiver.email:
+                return HttpResponse(f"{sender.email} and {receiver.email} are already friends!")
             else:
-                return Response(f"{self.request.user.email} is not part of this friend request.")
+                return HttpResponse(f"{self.request.user.email} is not part of this friend request.")
         except FriendRequest.DoesNotExist:
-            return Response(f"There is no friend request with ID {request_id}")
-
-
-# DELETE: Reject an open friend request
-class RejectFriendRequest(GenericAPIView):
-    serializer_class = FriendRequestSerializer
-    lookup_url_kwarg = "request_id"
-
-    def delete(self, request, *args, **kwargs):
-        request_id = kwargs["request_id"]
-        friend_request = FriendRequest.objects.get(uuid=request_id)
-        current_user_id = self.request.user.id
-        if friend_request.status == "pending" and friend_request.receiver_id == current_user_id:
-            friend_request.delete()
-            return Response("Friend request was rejected!")
-        return Response(f"You have no pending friend request with ID {request_id}")
-
-
-# GET: List all friends
-class ShowFriends(ListAPIView):
-    serializer_class = UserSerializer
-
-    def get_queryset(self):
-        accepted_requests = self.request.user.received_friend_request.all().filter(status="friends")
-        friends = [fr.sender for fr in accepted_requests]
-        return friends
-
-
-# DELETE: Unfriend a friend
-class DeleteFriendRelation(DestroyAPIView):
-    serializer_class = FriendRequestSerializer
-    lookup_url_kwarg = "uid"
-
-    def delete(self, request, *args, **kwargs):
-        user_id = self.kwargs["uid"]
-        to_unfriend = User.objects.get(uuid=user_id)
-        relation1 = FriendRequest.objects.get(sender=user_id, receiver=self.request.user.id)
-        relation2 = FriendRequest.objects.get(sender=self.request.user.id, receiver=user_id)
-        relation1.delete()
-        relation2.delete()
-        return Response(f"{self.request.user.email} unfriended {to_unfriend.email}")
-
+            return HttpResponse(f"There is no friend request with ID {request_id}")

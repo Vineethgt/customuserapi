@@ -31,6 +31,7 @@ class User(BaseModel,AbstractBaseUser,PermissionsMixin):
     is_active       = models.BooleanField(default=True)
     is_staff        = models.BooleanField(default=False)
     is_superuser    = models.BooleanField(default=False)  
+    profile_status  = models.CharField(verbose_name="Profile status",max_length=10,choices=(('Public', 'Public'),('Private', 'Private'),),default='Public')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -49,9 +50,10 @@ class Profile(BaseModel):
     date_of_birth      = models.DateField(verbose_name='date_of_birth',blank=True,default=None,null=True)
     gender_choice      = [('','Select Gender'),('Male', 'Male'),('Female', 'Female'),('Other', 'Other')]
     gender             = models.CharField(max_length=10, choices=gender_choice, blank=True, null=True)
+    #gender             = models.CharField(max_length=1, blank=True, null=True)
     city               = models.CharField(max_length=20, blank=True, null=True)
     country            = models.CharField(max_length=20, null=True, blank=True)
-    profile_status     = models.CharField(verbose_name="Profile status",max_length=10,choices=(('Public', 'Public'),('Private', 'Private'),),default='Public')
+    #profile_status     = models.CharField(verbose_name="Profile status",max_length=10,choices=(('Public', 'Public'),('Private', 'Private'),),default='Public')
     follow             = models.ManyToManyField(to=User,related_name="followed_by",)
     def __str__(self):
         return f'{self.user.email} Profile'

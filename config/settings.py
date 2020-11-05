@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'allauth.socialaccount',
     'django_filters',
-    'generics'
+    'generics',
 ]
 
 AUTH_USER_MODEL = 'api.User'

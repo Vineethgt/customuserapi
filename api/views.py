@@ -1,6 +1,6 @@
 import uuid
 from api.models import User, Profile, Education, Experience, Feed, FriendRequest
-from api.serializers import UserSerializer, ProfileSerializer, EducationSerializer, ExperienceSerializer, FeedSerializer, FriendRequestSerializer, UserProfileSerializer, UserProfileFriendSerializer
+from api.serializers import UserSerializer, ProfileSerializer, EducationSerializer, ExperienceSerializer, FeedSerializer, FriendRequestSerializer, UserProfileSerializer, UserFriendSerializer
 from rest_framework.views import APIView
 from rest_framework.generics import UpdateAPIView, DestroyAPIView, ListAPIView, GenericAPIView, CreateAPIView
 from django.http import HttpResponse
@@ -19,6 +19,9 @@ from django.contrib.auth import  get_user_model
 import django_filters
 from django.core.mail import EmailMessage
 from rest_framework.response import Response
+from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
 
 
 class BasicPagination(PageNumberPagination):
@@ -104,9 +107,19 @@ def email(request):
 #        return HttpResponse(f"{self.request.user.email} follows {user_to_follow.email}")
 
 class Follow(UpdateAPIView):
-    serializer_class = UserProfileFriendSerializer
-    queryset = UserProfileFriendSerializer
+    # serializer_class = UserProfileSerializer
+    # queryset = ProfileSerializer
+    querylist = [
+        {'queryset': User.objects.all(), 'serializer_class': UserSerializer},
+        {'queryset': FriendRequest.objects.all(), 'serializer_class': FriendRequestSerializer},
+        {'queryset': Profile.objects.all(), 'serializer_class': ProfileSerializer},
+    ]
     lookup_url_kwarg = "uid"
+
+    def get_queryset(self):
+        accepted_requests = self.request.user.received_friend_request.all()
+        friends = [fr.sender for fr in accepted_requests]
+        return friends
 
     def patch(self, request, *args, **kwargs):
         #import pdb; pdb.set_trace()
@@ -118,7 +131,8 @@ class Follow(UpdateAPIView):
                 return HttpResponse(f"{self.request.user.email} follows {user_to_follow.email}")
             else:
                 return HttpResponse(f"{self.request.user.email} is already following {user_to_follow.email}")
-        elif user_to_follow.profile_status == "Private" and user_to_follow.status == "friends":
+        #elif user_to_follow.profile_status == "Private" and user_to_follow.status == "friends":
+        elif user_to_follow.profile_status == "Private" and user_to_follow.received_friend_request.all().filter(status="friends"):
             if user_to_follow not in self.request.user.user_profile.follow.all():
                 user_to_follow.followed_by.add(self.request.user.user_profile)
                 return HttpResponse(f"{self.request.user.email} follows {user_to_follow.email}")
@@ -145,6 +159,9 @@ class Unfollow(DestroyAPIView):
 # GET: List of all the followers
 class ListFollowers(ListAPIView):
     serializer_class = UserProfileSerializer
+    pagination_class = BasicPagination
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
 
     def get_queryset(self):
         followers_profile = self.request.user.followed_by.all()
@@ -163,6 +180,8 @@ class ListFollowers(ListAPIView):
 # GET: List of all the people the user is following
 class ListFollowing(ListAPIView):
     serializer_class = UserProfileSerializer
+    pagination_class = BasicPagination
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         following_profiles = self.request.user.user_profile.follow.all()

@@ -1,0 +1,37 @@
+INFO 2020-11-17 11:58:47,821 autoreload 3228 15644 Watching for file changes with StatReloader
+INFO 2020-11-17 12:01:12,232 autoreload 3228 15644 C:\Users\VINEETH\Desktop\Pro\Customuser1\restapi\api\Base_Viewset.py changed, reloading.
+INFO 2020-11-17 12:01:13,257 autoreload 16196 4968 Watching for file changes with StatReloader
+INFO 2020-11-17 12:01:23,716 autoreload 16196 4968 C:\Users\VINEETH\Desktop\Pro\Customuser1\restapi\api\Base_Viewset.py changed, reloading.
+INFO 2020-11-17 12:01:24,761 autoreload 16832 3668 Watching for file changes with StatReloader
+INFO 2020-11-17 12:01:43,874 autoreload 16832 3668 C:\Users\VINEETH\Desktop\Pro\Customuser1\restapi\api\Base_Viewset.py changed, reloading.
+INFO 2020-11-17 12:01:44,935 autoreload 12740 16720 Watching for file changes with StatReloader
+INFO 2020-11-17 12:02:11,605 autoreload 12740 16720 C:\Users\VINEETH\Desktop\Pro\Customuser1\restapi\api\Base_Viewset.py changed, reloading.
+INFO 2020-11-17 12:02:12,635 autoreload 14968 436 Watching for file changes with StatReloader
+INFO 2020-11-17 12:02:29,617 autoreload 14968 436 C:\Users\VINEETH\Desktop\Pro\Customuser1\restapi\api\views.py changed, reloading.
+INFO 2020-11-17 12:02:30,676 autoreload 15376 276 Watching for file changes with StatReloader
+INFO 2020-11-17 12:02:30,924 views 15376 276 Users
+INFO 2020-11-17 12:02:53,296 autoreload 15376 276 C:\Users\VINEETH\Desktop\Pro\Customuser1\restapi\api\views.py changed, reloading.
+INFO 2020-11-17 12:02:54,462 autoreload 16164 9836 Watching for file changes with StatReloader
+INFO 2020-11-17 12:02:54,762 views 16164 9836 Users
+INFO 2020-11-17 12:02:54,762 views 16164 9836 Profile
+INFO 2020-11-17 12:03:47,669 autoreload 16164 9836 C:\Users\VINEETH\Desktop\Pro\Customuser1\restapi\api\views.py changed, reloading.
+INFO 2020-11-17 12:03:48,740 autoreload 10720 10856 Watching for file changes with StatReloader
+INFO 2020-11-17 12:03:49,022 views 10720 10856 Users
+INFO 2020-11-17 12:03:49,022 views 10720 10856 Profile
+INFO 2020-11-17 12:03:49,023 views 10720 10856 Education
+INFO 2020-11-17 12:03:49,023 views 10720 10856 Experience
+INFO 2020-11-17 12:06:41,596 autoreload 10720 10856 C:\Users\VINEETH\Desktop\Pro\Customuser1\restapi\api\views.py changed, reloading.
+INFO 2020-11-17 12:06:42,687 autoreload 7808 436 Watching for file changes with StatReloader
+INFO 2020-11-17 12:06:42,949 views 7808 436 Users
+INFO 2020-11-17 12:06:42,949 views 7808 436 Profile
+INFO 2020-11-17 12:06:42,950 views 7808 436 Education
+INFO 2020-11-17 12:06:42,950 views 7808 436 Experience
+INFO 2020-11-17 12:07:02,710 basehttp 7808 18292 "GET / HTTP/1.1" 200 10848
+INFO 2020-11-17 12:07:08,550 basehttp 7808 18292 "GET /profile/ HTTP/1.1" 200 18499
+INFO 2020-11-17 12:08:00,656 basehttp 7808 18292 "GET /users/followers/ HTTP/1.1" 200 10671
+INFO 2020-11-17 12:08:48,296 autoreload 7808 436 C:\Users\VINEETH\Desktop\Pro\Customuser1\restapi\api\views.py changed, reloading.
+INFO 2020-11-17 12:08:49,586 autoreload 952 10424 Watching for file changes with StatReloader
+INFO 2020-11-17 12:08:49,960 views 952 10424 Users
+INFO 2020-11-17 12:08:49,960 views 952 10424 Profile
+INFO 2020-11-17 12:08:49,961 views 952 10424 Education
+INFO 2020-11-17 12:08:49,961 views 952 10424 Experience

@@ -31,6 +31,7 @@ class BaseViewset(viewsets.ModelViewSet):
             )
 
         serializer = self.get_serializer(queryset, many = True)
+
         return Response({"status": "true", "message": "data listed successfully.", "data": serializer.data})
 
     def get_object(self, pk):

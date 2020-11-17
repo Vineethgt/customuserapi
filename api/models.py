@@ -17,8 +17,9 @@ from config import settings
 
 class BaseModel(models.Model):
     uuid            = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_at      = models.DateTimeField(blank=True, null=True,auto_now_add=True)
-    updated_at      = models.DateTimeField(blank=True, null=True,auto_now=True)
+    #created_at      = models.DateTimeField(blank=True, null=True,auto_now_add=True)
+    created_at      = models.DateTimeField(auto_now_add=True)
+    updated_at      = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
@@ -47,13 +48,11 @@ class Profile(BaseModel):
     profile_image      = models.ImageField(default=None,upload_to='profile_pics', blank= True,null=True)
     bio                = models.CharField(default=None,max_length=500)
     headline           = models.CharField(default=None,max_length=100)
-    date_of_birth      = models.DateField(verbose_name='date_of_birth',blank=True,default=None,null=True)
+    date_of_birth      = models.DateField(verbose_name='Date of birth',blank=True,default=None,null=True)
     gender_choice      = [('','Select Gender'),('Male', 'Male'),('Female', 'Female'),('Other', 'Other')]
     gender             = models.CharField(max_length=10, choices=gender_choice, blank=True, null=True)
-    #gender             = models.CharField(max_length=1, blank=True, null=True)
     city               = models.CharField(max_length=20, blank=True, null=True)
     country            = models.CharField(max_length=20, null=True, blank=True)
-    #profile_status     = models.CharField(verbose_name="Profile status",max_length=10,choices=(('Public', 'Public'),('Private', 'Private'),),default='Public')
     follow             = models.ManyToManyField(to=User,related_name="followed_by",)
     def __str__(self):
         return f'{self.user.email} Profile'
@@ -136,12 +135,12 @@ class FriendRequest(BaseModel):
 
 
 '''class UserProfile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
-    title = models.CharField(max_length=5)
-    dob = models.DateField()
+    user    = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    title   = models.CharField(max_length=5)
+    dob     = models.DateField()
     address = models.CharField(max_length=255)
     country = models.CharField(max_length=50)
-    city = models.CharField(max_length=50)
-    zip = models.CharField(max_length=5)
-    photo = models.ImageField(upload_to='uploads', blank=True)
+    city    = models.CharField(max_length=50)
+    zip     = models.CharField(max_length=5)
+    photo   = models.ImageField(upload_to='uploads', blank=True)
 '''

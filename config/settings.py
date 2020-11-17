@@ -204,3 +204,38 @@ EMAIL_HOST_USER = 'your@mail.com'
 EMAIL_HOST_PASSWORD = 'password'
 
 REST_AUTH_SERIALIZERS = {'USER_DETAILS_SERIALIZER': 'api.serializers.UserSerializer',}
+
+LOGGING ={
+    'version':1,
+    'handlers':{
+        'file':{
+            'level':'DEBUG',
+            'class':'logging.FileHandler',
+            'filename':'./logs/debug.log',
+            'formatter':'simple',
+        },
+        'file2':{
+            'level':'INFO',
+            'class':'logging.FileHandler',
+            'filename':'./logs/INFO.log',
+            'formatter':'verbose',
+        },
+    },
+    'loggers':{
+        'django':{
+            'handlers':['file','file2'],
+            'level':'DEBUG',
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {asctime} {message}',
+            'style': '{',
+        },
+    },
+
+}

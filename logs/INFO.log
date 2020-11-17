@@ -35,3 +35,9 @@ INFO 2020-11-17 12:08:49,960 views 952 10424 Users
 INFO 2020-11-17 12:08:49,960 views 952 10424 Profile
 INFO 2020-11-17 12:08:49,961 views 952 10424 Education
 INFO 2020-11-17 12:08:49,961 views 952 10424 Experience
+INFO 2020-11-17 12:17:24,797 autoreload 952 10424 C:\Users\VINEETH\Desktop\Pro\Customuser1\restapi\api\views.py changed, reloading.
+INFO 2020-11-17 12:17:26,269 autoreload 15024 2296 Watching for file changes with StatReloader
+INFO 2020-11-17 12:17:26,660 views 15024 2296 Users
+INFO 2020-11-17 12:17:26,660 views 15024 2296 Profile
+INFO 2020-11-17 12:17:26,661 views 15024 2296 Education
+INFO 2020-11-17 12:17:26,661 views 15024 2296 Experience

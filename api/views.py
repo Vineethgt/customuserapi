@@ -146,7 +146,6 @@ class Follow(UpdateAPIView):
                 return HttpResponse(f"{self.request.user.email} is already following {user_to_follow.email}")
         else:
             return HttpResponse(f"{self.request.user.email} has to be friend to follow {user_to_follow.email}")
-        return HttpResponse(f"***********check code***************")       
 
 
 # POST: unfollow a user
